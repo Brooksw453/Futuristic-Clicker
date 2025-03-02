@@ -120,3 +120,7 @@ button:disabled {
   50%  { box-shadow: 0 0 10px #0ff; }
   100% { box-shadow: 0 0 10px #fff; }
 }
+button {
+  touch-action: manipulation;
+  -ms-touch-action: manipulation;
+}

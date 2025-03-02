@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Futuristic Idle Clicker Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Home Screen -->
+  <div id="homeScreen" class="screen">
+    <h1>Futuristic Idle Clicker</h1>
+    <button id="startButton">Start Game</button>
+  </div>
+
+  <!-- Main Game Screen -->
+  <div id="gameScreen" class="screen" style="display:none;">
+    <div id="scoreBoard">
+      Points: <span id="points">0</span>
+    </div>
+    <button id="tapButton" class="tap-button">TAP</button>
+    <div id="upgrades">
+      <button id="buyAuto" class="upgrade-button">
+        Buy Auto-Clicker<br>
+        Own: <span id="autoCount">0</span> | Cost: <span id="autoCostLabel">10</span>
+      </button>
+      <button id="buyMultiplier" class="upgrade-button">
+        Buy Multiplier<br>
+        Level: <span id="multiplierLevel">0</span> | Cost: <span id="multiplierCostLabel">50</span>
+      </button>
+      <button id="resetButton" class="reset-button">Reset Game</button>
+    </div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="gameOverScreen" class="screen" style="display:none;">
+    <h2>Game Over</h2>
+    <p>You earned <span id="finalScore">0</span> points!</p>
+    <button id="restartButton">Restart</button>
+  </div>
+
+  <!-- Audio elements for sound -->
+  <audio id="bgMusic" src="assets/bg-music.mp3" loop preload="auto"></audio>
+  <audio id="clickSound" src="assets/click.mp3" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>

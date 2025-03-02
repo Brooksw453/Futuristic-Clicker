@@ -1,0 +1,122 @@
+body {
+  margin: 0;
+  background: #000;
+  color: #ccc;
+  font-family: sans-serif;
+  /* Tip: You can import a futuristic font (e.g., Orbitron) for a more thematic look */
+  /* font-family: 'Orbitron', sans-serif; */
+}
+
+/* Full-screen sections */
+.screen {
+  width: 100%;
+  height: 100vh;
+}
+
+/* Center home and game-over screens */
+#homeScreen, #gameOverScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#homeScreen h1 {
+  color: #0ff;
+  text-shadow: 0 0 7px #0ff;
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+#gameOverScreen h2 {
+  color: #0ff;
+  text-shadow: 0 0 7px #0ff;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+#gameOverScreen p {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+#finalScore {
+  color: #0ff;
+  font-weight: bold;
+  text-shadow: 0 0 5px #0ff;
+}
+
+/* Main game screen layout */
+#gameScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* space between top (score) and bottom (upgrades) */
+  align-items: center;
+  padding: 20px 0;
+}
+#scoreBoard {
+  font-size: 1.2em;
+  color: #ccc;
+}
+#scoreBoard #points {
+  color: #0ff;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-shadow: 0 0 5px #0ff;
+}
+
+/* Button styles (neon glow effect) */
+button {
+  background: #222;
+  color: #0ff;
+  border: 2px solid #0ff;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  text-shadow: 0 0 5px #0ff;
+  box-shadow: 0 0 10px #0ff;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Tap button (circular and large) */
+.tap-button {
+  border-radius: 50%;
+  padding: 0;
+  width: 40vmin;
+  height: 40vmin;
+  min-width: 100px;
+  min-height: 100px;
+  max-width: 300px;
+  max-height: 300px;
+  font-size: 1.5em;
+}
+
+/* Upgrade buttons container */
+#upgrades {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Animation classes */
+.clicked {
+  animation: clickPulse 0.2s ease;
+}
+.purchased {
+  animation: flash 0.5s ease;
+}
+@keyframes clickPulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+@keyframes flash {
+  0%   { box-shadow: 0 0 10px #fff; }
+  50%  { box-shadow: 0 0 10px #0ff; }
+  100% { box-shadow: 0 0 10px #fff; }
+}

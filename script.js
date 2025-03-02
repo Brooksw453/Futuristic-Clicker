@@ -11,7 +11,7 @@ let autoInterval = null;
 
 // Settings variables
 const bgMusicChoices = [
-  "assets/bg-music1.mp3",
+  "assets/future_click.mp3",
   "assets/bg-music2.mp3",
   "assets/bg-music3.mp3"
 ];

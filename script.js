@@ -1,4 +1,4 @@
-// Initial game state variables
+// Game state variables
 let points = 0;
 let pointsPerClick = 1;
 let autoClickers = 0;
@@ -9,9 +9,22 @@ const autoCostFactor = 1.5;
 const multiplierCostFactor = 1.5;
 let autoInterval = null;
 
-// Get references to DOM elements
+// Settings variables
+const bgMusicChoices = [
+  "assets/bg-music1.mp3",
+  "assets/bg-music2.mp3",
+  "assets/bg-music3.mp3"
+];
+let bgMusicChoice = 0;
+let bgVolume = 0.5; // Default volume
+
+// Track which screen opened settings
+let previousScreen = "";
+
+// DOM Elements
 const homeScreen = document.getElementById('homeScreen');
 const gameScreen = document.getElementById('gameScreen');
+const settingsScreen = document.getElementById('settingsScreen');
 const gameOverScreen = document.getElementById('gameOverScreen');
 const startButton = document.getElementById('startButton');
 const tapButton = document.getElementById('tapButton');
@@ -19,6 +32,9 @@ const buyAutoButton = document.getElementById('buyAuto');
 const buyMultiplierButton = document.getElementById('buyMultiplier');
 const resetButton = document.getElementById('resetButton');
 const restartButton = document.getElementById('restartButton');
+const settingsButtonHome = document.getElementById('settingsButtonHome');
+const settingsButtonGame = document.getElementById('settingsButtonGame');
+const settingsBackButton = document.getElementById('settingsBackButton');
 const pointsDisplay = document.getElementById('points');
 const autoCountDisplay = document.getElementById('autoCount');
 const multiplierLevelDisplay = document.getElementById('multiplierLevel');
@@ -27,12 +43,12 @@ const multiplierCostDisplay = document.getElementById('multiplierCostLabel');
 const finalScoreDisplay = document.getElementById('finalScore');
 const bgMusic = document.getElementById('bgMusic');
 const clickSound = document.getElementById('clickSound');
+const volumeSlider = document.getElementById('volumeSlider');
 
-// Load game state from localStorage if available
+// Load game state and settings from localStorage
 function loadGame() {
   const savedPoints = localStorage.getItem('points');
   if (savedPoints !== null) {
-    // Load saved values
     points = parseInt(savedPoints);
     pointsPerClick = parseInt(localStorage.getItem('pointsPerClick')) || 1;
     autoClickers = parseInt(localStorage.getItem('autoClickers')) || 0;
@@ -40,7 +56,6 @@ function loadGame() {
     multiplierLevel = parseInt(localStorage.getItem('multiplierLevel')) || 0;
     multiplierCost = parseInt(localStorage.getItem('multiplierCost')) || 50;
   } else {
-    // No saved game, use default starting values
     points = 0;
     pointsPerClick = 1;
     autoClickers = 0;
@@ -48,9 +63,23 @@ function loadGame() {
     multiplierLevel = 0;
     multiplierCost = 50;
   }
+  
+  const savedBgChoice = localStorage.getItem('bgMusicChoice');
+  if (savedBgChoice !== null) {
+    bgMusicChoice = parseInt(savedBgChoice);
+  }
+  const savedVolume = localStorage.getItem('bgVolume');
+  if (savedVolume !== null) {
+    bgVolume = parseFloat(savedVolume);
+  }
+  
+  // Update bgMusic settings
+  bgMusic.src = bgMusicChoices[bgMusicChoice];
+  bgMusic.volume = bgVolume;
+  updateSettingsUI();
 }
 
-// Save current state to localStorage
+// Save game state and settings to localStorage
 function saveGame() {
   localStorage.setItem('points', points);
   localStorage.setItem('pointsPerClick', pointsPerClick);
@@ -58,88 +87,96 @@ function saveGame() {
   localStorage.setItem('autoCost', autoCost);
   localStorage.setItem('multiplierLevel', multiplierLevel);
   localStorage.setItem('multiplierCost', multiplierCost);
+  localStorage.setItem('bgMusicChoice', bgMusicChoice);
+  localStorage.setItem('bgVolume', bgVolume);
 }
 
-// Update the displayed UI elements
+// Update the main UI
 function updateUI() {
   pointsDisplay.innerText = points;
   autoCountDisplay.innerText = autoClickers;
   multiplierLevelDisplay.innerText = multiplierLevel;
   autoCostDisplay.innerText = autoCost;
   multiplierCostDisplay.innerText = multiplierCost;
-  // Enable/disable upgrade buttons based on affordability
   buyAutoButton.disabled = (points < autoCost);
   buyMultiplierButton.disabled = (points < multiplierCost);
 }
 
-// Start or continue the game
-function startGame() {
-  loadGame();                            // Load saved progress (if any)
+// Update Settings Screen UI (radio buttons and slider)
+function updateSettingsUI() {
+  document.querySelectorAll('input[name="bgMusic"]').forEach(radio => {
+    radio.checked = (parseInt(radio.value) === bgMusicChoice);
+  });
+  volumeSlider.value = bgVolume;
+}
+
+// Screen transition helper: hide all screens then show target
+function showScreen(targetScreen) {
   homeScreen.style.display = 'none';
+  gameScreen.style.display = 'none';
+  settingsScreen.style.display = 'none';
   gameOverScreen.style.display = 'none';
-  gameScreen.style.display = 'flex';     // Show main game screen
+  targetScreen.style.display = 'flex';
+}
+
+// Start or resume the game
+function startGame() {
+  loadGame();
+  showScreen(gameScreen);
   bgMusic.currentTime = 0;
-  bgMusic.play();                        // Play background music
-  // Start auto-clicker interval
+  bgMusic.play();
   if (autoInterval) clearInterval(autoInterval);
   autoInterval = setInterval(() => {
     if (autoClickers > 0) {
-      points += autoClickers;            // generate points from auto-clickers
+      points += autoClickers;
     }
     updateUI();
     saveGame();
   }, 1000);
-  updateUI(); // initial UI update
+  updateUI();
 }
 
-// End the game and show Game Over screen
+// End game (reset interval and show Game Over)
 function gameOver() {
   if (autoInterval) {
     clearInterval(autoInterval);
     autoInterval = null;
   }
   bgMusic.pause();
-  finalScoreDisplay.innerText = points;  // show final score
-  gameScreen.style.display = 'none';
-  gameOverScreen.style.display = 'flex'; // show Game Over screen
+  finalScoreDisplay.innerText = points;
+  showScreen(gameOverScreen);
 }
 
-// Event listeners for buttons:
-startButton.addEventListener('click', () => {
-  startGame();
-});
+// Event Listeners
+
+startButton.addEventListener('click', startGame);
 
 tapButton.addEventListener('click', () => {
-  // Manual tap to earn points
   points += pointsPerClick;
   updateUI();
   clickSound.currentTime = 0;
   clickSound.play();
-  // Click animation
   tapButton.classList.add('clicked');
   setTimeout(() => tapButton.classList.remove('clicked'), 200);
 });
 
 buyAutoButton.addEventListener('click', () => {
-  // Purchase Auto-Clicker upgrade
   if (points >= autoCost) {
     points -= autoCost;
     autoClickers += 1;
-    autoCost = Math.ceil(autoCost * autoCostFactor);  // increase next cost
+    autoCost = Math.ceil(autoCost * autoCostFactor);
     updateUI();
     saveGame();
-    // Upgrade button flash animation
     buyAutoButton.classList.add('purchased');
     setTimeout(() => buyAutoButton.classList.remove('purchased'), 500);
   }
 });
 
 buyMultiplierButton.addEventListener('click', () => {
-  // Purchase Multiplier upgrade
   if (points >= multiplierCost) {
     points -= multiplierCost;
     multiplierLevel += 1;
-    pointsPerClick = 1 + multiplierLevel;             // each multiplier adds +1 per tap
+    pointsPerClick = 1 + multiplierLevel;
     multiplierCost = Math.ceil(multiplierCost * multiplierCostFactor);
     updateUI();
     saveGame();
@@ -149,19 +186,52 @@ buyMultiplierButton.addEventListener('click', () => {
 });
 
 resetButton.addEventListener('click', () => {
-  // Reset the game progress
   if (!confirm('Reset progress and start over?')) return;
-  localStorage.clear();  // clear saved data
-  gameOver();            // end the game and go to Game Over screen
+  localStorage.clear();
+  gameOver();
 });
 
 restartButton.addEventListener('click', () => {
-  // Restart a new game from Game Over screen
   gameOverScreen.style.display = 'none';
   startGame();
 });
 
-// Prevent music from autoplaying on page load without interaction
+// Settings button event listeners (store which screen opened settings)
+settingsButtonHome.addEventListener('click', () => {
+  previousScreen = 'home';
+  showScreen(settingsScreen);
+});
+settingsButtonGame.addEventListener('click', () => {
+  previousScreen = 'game';
+  showScreen(settingsScreen);
+});
+
+// Settings Back button: return to the previous screen
+settingsBackButton.addEventListener('click', () => {
+  if (previousScreen === 'home') {
+    showScreen(homeScreen);
+  } else if (previousScreen === 'game') {
+    showScreen(gameScreen);
+  }
+});
+
+// Radio button event: change background music selection
+document.querySelectorAll('input[name="bgMusic"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    bgMusicChoice = parseInt(e.target.value);
+    bgMusic.src = bgMusicChoices[bgMusicChoice];
+    saveGame();
+  });
+});
+
+// Volume slider event: update volume
+volumeSlider.addEventListener('input', (e) => {
+  bgVolume = parseFloat(e.target.value);
+  bgMusic.volume = bgVolume;
+  saveGame();
+});
+
+// Prevent music from autoplaying without interaction
 window.addEventListener('load', () => {
   bgMusic.pause();
   bgMusic.currentTime = 0;

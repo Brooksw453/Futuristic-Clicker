@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Prevent mobile zooming -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Futuristic Idle Clicker Game</title>
   <link rel="stylesheet" href="style.css" />
@@ -12,9 +13,10 @@
   <div id="homeScreen" class="screen">
     <h1>Futuristic Idle Clicker</h1>
     <button id="startButton">Start Game</button>
+    <button id="settingsButtonHome" class="settings-button">Settings</button>
   </div>
 
-  <!-- Main Game Screen -->
+  <!-- Game Screen -->
   <div id="gameScreen" class="screen" style="display:none;">
     <div id="scoreBoard">
       Points: <span id="points">0</span>
@@ -31,6 +33,29 @@
       </button>
       <button id="resetButton" class="reset-button">Reset Game</button>
     </div>
+    <button id="settingsButtonGame" class="settings-button">Settings</button>
+  </div>
+
+  <!-- Settings Screen -->
+  <div id="settingsScreen" class="screen" style="display:none;">
+    <h2>Settings</h2>
+    <div class="settings-section">
+      <h3>Background Music</h3>
+      <label>
+        <input type="radio" name="bgMusic" value="0" /> Music 1
+      </label>
+      <label>
+        <input type="radio" name="bgMusic" value="1" /> Music 2
+      </label>
+      <label>
+        <input type="radio" name="bgMusic" value="2" /> Music 3
+      </label>
+    </div>
+    <div class="settings-section">
+      <h3>Volume</h3>
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" />
+    </div>
+    <button id="settingsBackButton">Back</button>
   </div>
 
   <!-- Game Over Screen -->
@@ -41,9 +66,10 @@
   </div>
 
   <!-- Audio elements for sound -->
-  <audio id="bgMusic" src="assets/bg-music.mp3" loop preload="auto"></audio>
+  <audio id="bgMusic" src="assets/bg-music1.mp3" loop preload="auto"></audio>
   <audio id="clickSound" src="assets/click.mp3" preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>
 </html>
+

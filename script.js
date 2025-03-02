@@ -154,8 +154,9 @@ startButton.addEventListener('click', startGame);
 tapButton.addEventListener('click', () => {
   points += pointsPerClick;
   updateUI();
-  clickSound.currentTime = 0;
-  clickSound.play();
+  // Clone the audio element to allow overlapping playback
+  const soundClone = clickSound.cloneNode();
+  soundClone.play();
   tapButton.classList.add('clicked');
   setTimeout(() => tapButton.classList.remove('clicked'), 200);
 });
